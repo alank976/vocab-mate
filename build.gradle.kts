@@ -47,7 +47,7 @@ dependencies {
 
 
 application {
-    mainClass.set("github.io.ApplicationKt")
+    mainClass.set("github.io.vocabmate.ApplicationKt")
 }
 java {
     sourceCompatibility = JavaVersion.toVersion("11")
