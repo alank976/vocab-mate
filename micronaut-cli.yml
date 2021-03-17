@@ -1,0 +1,6 @@
+applicationType: default
+defaultPackage: github.io
+testFramework: kotest
+sourceLanguage: kotlin
+buildTool: gradle_kotlin
+features: [annotation-api, app-name, config4k, graalvm, gradle, graphql, http-client, jax-rs, kotest, kotlin, kotlin-application, kotlin-extension-functions, logback, management, netty-server, openapi, readme, rxjava3, shade]
