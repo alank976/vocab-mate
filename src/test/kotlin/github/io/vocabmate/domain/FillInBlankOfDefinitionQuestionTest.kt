@@ -1,6 +1,7 @@
 package github.io.vocabmate.domain
 
 import github.io.vocabmate.domain.questions.Question
+import github.io.vocabmate.domain.words.Word
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.ints.shouldBeExactly
@@ -8,9 +9,9 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 
 class FillInBlankOfDefinitionQuestionTest : StringSpec({
-    val words = Words(
-        value = "genius",
-        partOfSpeech = Words.PartOfSpeech.Noun,
+    val words = Word(
+        word = "genius",
+        partOfSpeech = Word.PartOfSpeech.Noun,
         definition = "very great and rare natural ability or skill, especially in a particular area such as science or art, or a person who has this"
     )
     val question = Question.FillInBlankOfDefinitionQuestion(words, 1)

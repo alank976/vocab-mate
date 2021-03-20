@@ -1,8 +1,8 @@
 package github.io.vocabmate.domain.questions
 
-import github.io.vocabmate.domain.Words
+import github.io.vocabmate.domain.words.Word
 
-sealed class Question(val words: Words, val creditPoint: Int) {
+sealed class Question(val word: Word, val creditPoint: Int) {
     abstract fun question(): String
     abstract fun choices(): List<String>
     abstract fun answer(answer: String): Boolean
@@ -19,10 +19,9 @@ sealed class Question(val words: Words, val creditPoint: Int) {
         "have", "has", "will", "shall", "would", "could", "not"
     )
 
-
-    class FillInBlankOfDefinitionQuestion(words: Words, creditPoint: Int) : Question(words, creditPoint) {
+    class FillInBlankOfDefinitionQuestion(word: Word, creditPoint: Int) : Question(word, creditPoint) {
         private val replacedWordIndex: Int
-        private val definitionWords = words.definition.split(" ")
+        private val definitionWords = word.definition.split(" ")
         private val answer: String
 
         init {
@@ -30,7 +29,7 @@ sealed class Question(val words: Words, val creditPoint: Int) {
                 .mapIndexed { i, s -> i to s }
                 .filter { (_, word) -> !word.ignoreLastNonLetterCharIfAny().isTrivialWord() }
                 .associate { it }
-            if (replaceableWords.isEmpty()) throw DefinitionTooSimpleException(words.definition)
+            if (replaceableWords.isEmpty()) throw DefinitionTooSimpleException(word.definition)
             replacedWordIndex = replaceableWords.keys.random()
             answer = definitionWords[replacedWordIndex].ignoreLastNonLetterCharIfAny()
         }
