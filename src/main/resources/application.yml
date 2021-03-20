@@ -2,11 +2,8 @@ micronaut:
   application:
     name: vocab-mate
 
-urban-dict:
-  url: https://mashape-community-urban-dictionary.p.rapidapi.com
+rapid-api:
   api-key-header: X-Rapidapi-Key
-
-words-api:
-  url: https://wordsapiv1.p.rapidapi.com
-  key-header: X-Rapidapi-Key
-
+  api-key: <changeme>
+  urban-dict-url: https://mashape-community-urban-dictionary.p.rapidapi.comó
+  words-api-url: https://wordsapiv1.p.rapidapi.com

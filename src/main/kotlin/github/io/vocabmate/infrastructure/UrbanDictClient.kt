@@ -1,10 +1,9 @@
 package github.io.vocabmate.infrastructure
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import github.io.vocabmate.domain.words.WordsService
 import github.io.vocabmate.domain.words.Word
+import github.io.vocabmate.domain.words.WordsService
 import github.io.vocabmate.logger
-import io.micronaut.context.annotation.Value
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.client.RxHttpClient
 import io.micronaut.http.client.annotation.Client
@@ -16,12 +15,9 @@ import javax.inject.Singleton
 @Singleton
 @Named("urban")
 class UrbanDictClient(
-    @Client("\${urban-dict.url}")
+    @Client("\${rapid-api.urban-dict-url}")
     private val httpClient: RxHttpClient,
-    @Value("\${urban-dict.api-key-header}")
-    private val apiKeyHeader: String,
-    @Value("\${urban-dict.api-key}")
-    private val apiKeyValue: String
+    private val rapidApiConfigProps: RapidApiConfigProps
 ) : WordsService {
     private val log = logger()
 
@@ -34,7 +30,9 @@ class UrbanDictClient(
         val request = UriBuilder.of("/define")
             .queryParam("term", term)
             .build()
-            .let { uri -> HttpRequest.GET<Any>(uri).header(apiKeyHeader, apiKeyValue) }
+            .let { uri ->
+                HttpRequest.GET<Any>(uri).header(rapidApiConfigProps.apiKeyHeader, rapidApiConfigProps.apiKey)
+            }
 
         val result = httpClient.toBlocking().retrieve(request, UrbanDictResponse::class.java)
         log.info("result = {}", result)
