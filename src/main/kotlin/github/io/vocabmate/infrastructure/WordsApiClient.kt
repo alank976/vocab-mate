@@ -7,6 +7,7 @@ import io.micronaut.http.HttpRequest
 import io.micronaut.http.client.RxHttpClient
 import io.micronaut.http.client.annotation.Client
 import io.micronaut.http.uri.UriBuilder
+import io.reactivex.Flowable
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -22,27 +23,42 @@ class WordsApiClient(
 ) : WordsService {
     private val log = logger()
 
-    override fun getWords(value: String): List<Word> {
+    override fun getWords(value: String): Flowable<Word> {
         val response = invoke(value)
         log.debug("WordsAPI responds $response")
-        return response.results.map { it.toDomainWords(response.word) }
+        return response.flatMap { wordsResponse ->
+            Flowable.fromIterable(wordsResponse.results).map {
+                it.toDomainWords(wordsResponse.word)
+            }
+        }
     }
 
-    private fun invoke(word: String): WordsResponse {
+    private fun invoke(word: String): Flowable<WordsResponse> {
         val request = UriBuilder.of("/words")
             .path(word)
             .build()
             .let { uri ->
                 HttpRequest.GET<Any>(uri).header(rapidApiConfigProps.apiKeyHeader, rapidApiConfigProps.apiKey)
             }
-        return httpClient.toBlocking().retrieve(request, WordsResponse::class.java)
+        return httpClient.exchange(request, WordsResponse::class.java)
+            .map { response ->
+                response.header("X-RateLimit-requests-Remaining")
+                    ?.toInt()
+                    ?.let { limit ->
+                        log.info("API usage limit remaining={}", limit)
+                        if (limit < 10) {
+                            log.error("MUST STOP USING THE API FOR THE SAKE OF $$$$$")
+                        }
+                    }
+                response.body()!!
+            }
     }
 
 
     data class WordsResponse(
         val word: String,
         val results: List<WordsResult> = emptyList()
-// offtopic, syllables and pronunciation
+        // offtopic, syllables and pronunciation
     )
 
     data class WordsResult(

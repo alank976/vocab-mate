@@ -8,6 +8,7 @@ import io.micronaut.http.HttpRequest
 import io.micronaut.http.client.RxHttpClient
 import io.micronaut.http.client.annotation.Client
 import io.micronaut.http.uri.UriBuilder
+import io.reactivex.Flowable
 import java.time.LocalDateTime
 import javax.inject.Named
 import javax.inject.Singleton
@@ -21,7 +22,7 @@ class UrbanDictClient(
 ) : WordsService {
     private val log = logger()
 
-    override fun getWords(value: String): List<Word> {
+    override fun getWords(value: String): Flowable<Word> {
         val response = checkDict(value)
         TODO("on hold due to mistmatch domain model too much")
     }
