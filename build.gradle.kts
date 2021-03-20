@@ -9,7 +9,8 @@ plugins {
 version = "0.1"
 group = "github.io"
 
-val kotlinVersion=project.properties.get("kotlinVersion")
+val kotlinVersion = project.properties["kotlinVersion"]
+val kotestVersion = "4.4.3"
 repositories {
     mavenCentral()
 }
@@ -43,6 +44,9 @@ dependencies {
     implementation("io.micronaut.jaxrs:micronaut-jaxrs-server")
     runtimeOnly("ch.qos.logback:logback-classic")
     runtimeOnly("com.fasterxml.jackson.module:jackson-module-kotlin")
+
+    testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
+    testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
 }
 
 
@@ -64,6 +68,7 @@ tasks {
             jvmTarget = "11"
         }
     }
-
-
+    test {
+        useJUnitPlatform()
+    }
 }
