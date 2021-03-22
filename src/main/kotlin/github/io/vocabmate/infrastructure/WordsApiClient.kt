@@ -53,31 +53,4 @@ class WordsApiClient(
                 response.body()!!
             }
     }
-
-
-    data class WordsResponse(
-        val word: String,
-        val results: List<WordsResult> = emptyList()
-        // offtopic, syllables and pronunciation
-    )
-
-    data class WordsResult(
-        val definition: String,
-        val partOfSpeech: String,
-        val synonyms: List<String> = emptyList(),
-        val typeOf: List<String> = emptyList(),
-        val hasTypes: List<String> = emptyList(),
-        val derivation: List<String> = emptyList(),
-        val examples: List<String> = emptyList(),
-        val similarTo: List<String> = emptyList(),
-    ) {
-        fun toDomainWords(word: String): Word = Word(
-            word = word,
-            partOfSpeech = Word.PartOfSpeech.fromFullWord(partOfSpeech)
-                ?: throw Exception("Unseen part of speech [$partOfSpeech]"),
-            definition = definition,
-            examples = examples,
-            synonyms = synonyms
-        )
-    }
 }
