@@ -1,0 +1,14 @@
+{
+  "name": "vocab-mate",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react",
+  "doctor": {
+    "issues": {
+      "git-not-used": {
+        "ignored": true
+      }
+    }
+  }
+}
