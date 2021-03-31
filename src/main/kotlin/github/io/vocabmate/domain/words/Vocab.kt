@@ -3,7 +3,7 @@ package github.io.vocabmate.domain.words
 import io.micronaut.core.annotation.Introspected
 
 @Introspected
-data class Word(
+data class Vocab(
     val word: String,
     val partOfSpeech: PartOfSpeech,
     val definition: String,

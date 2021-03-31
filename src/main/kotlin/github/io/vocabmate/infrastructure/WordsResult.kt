@@ -1,6 +1,6 @@
 package github.io.vocabmate.infrastructure
 
-import github.io.vocabmate.domain.words.Word
+import github.io.vocabmate.domain.words.Vocab
 import io.micronaut.core.annotation.Creator
 import io.micronaut.core.annotation.Introspected
 
@@ -27,9 +27,9 @@ data class WordsResult(
         emptyList()
     )
 
-    fun toDomainWords(word: String): Word = Word(
+    fun toDomainWords(word: String): Vocab = Vocab(
         word = word,
-        partOfSpeech = Word.PartOfSpeech.fromFullWord(partOfSpeech)
+        partOfSpeech = Vocab.PartOfSpeech.fromFullWord(partOfSpeech)
             ?: throw Exception("Unseen part of speech [$partOfSpeech]"),
         definition = definition,
         examples = examples,

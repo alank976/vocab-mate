@@ -1,7 +1,7 @@
 package github.io.vocabmate.infrastructure
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import github.io.vocabmate.domain.words.Word
+import github.io.vocabmate.domain.words.Vocab
 import github.io.vocabmate.domain.words.WordsService
 import github.io.vocabmate.logger
 import io.micronaut.http.HttpRequest
@@ -22,7 +22,7 @@ class UrbanDictClient(
 ) : WordsService {
     private val log = logger()
 
-    override fun getWords(value: String): Flowable<Word> {
+    override fun getWords(value: String): Flowable<Vocab> {
         val response = checkDict(value)
         TODO("on hold due to mistmatch domain model too much")
     }
