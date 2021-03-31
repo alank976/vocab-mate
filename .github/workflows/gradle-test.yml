@@ -20,3 +20,6 @@ jobs:
         run: chmod +x gradlew
       - name: Test with Gradle
         run: ./gradlew test
+        env:
+          FAUNA_API_KEY: ${{ secrets.FAUNA_API_KEY }}
+          RAPIDAPI_API_KEY: ${{ secrets.RAPIDAPI_API_KEY }}
