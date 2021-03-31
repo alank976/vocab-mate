@@ -1,8 +1,8 @@
-package github.io.vocabmate.infrastructure
+package github.io.vocabmate.infrastructure.rapidapi.urbandict
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import github.io.vocabmate.domain.words.Vocab
-import github.io.vocabmate.domain.words.WordsService
+import github.io.vocabmate.domain.vocabs.Vocab
+import github.io.vocabmate.domain.vocabs.VocabService
 import github.io.vocabmate.logger
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.client.RxHttpClient
@@ -18,11 +18,11 @@ import javax.inject.Singleton
 class UrbanDictClient(
     @Client("\${rapid-api.urban-dict-url}")
     private val httpClient: RxHttpClient,
-    private val rapidApiConfigProps: RapidApiConfigProps
-) : WordsService {
+    private val rapidApiConfigProps: github.io.vocabmate.infrastructure.rapidapi.RapidApiConfigProps
+) : VocabService {
     private val log = logger()
 
-    override fun getWords(value: String): Flowable<Vocab> {
+    override fun getVocab(value: String): Flowable<Vocab> {
         val response = checkDict(value)
         TODO("on hold due to mistmatch domain model too much")
     }

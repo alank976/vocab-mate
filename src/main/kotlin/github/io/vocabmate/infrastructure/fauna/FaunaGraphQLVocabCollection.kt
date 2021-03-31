@@ -14,7 +14,7 @@ import kotlinx.coroutines.runBlocking
 import java.net.URL
 import javax.annotation.PreDestroy
 import javax.inject.Singleton
-import github.io.vocabmate.domain.words.Vocab as VocabDomain
+import github.io.vocabmate.domain.vocabs.Vocab as VocabDomain
 import github.io.vocabmate.fauna.graphql.generated.allvocabsquery.Vocab as VocabQuery
 import github.io.vocabmate.fauna.graphql.generated.createvocabmutation.Vocab as VocabMutation
 import github.io.vocabmate.fauna.graphql.generated.enums.PartOfSpeech as GraphQLPartOfSpeech

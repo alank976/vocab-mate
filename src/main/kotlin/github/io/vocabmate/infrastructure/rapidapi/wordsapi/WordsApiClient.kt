@@ -1,7 +1,8 @@
-package github.io.vocabmate.infrastructure
+package github.io.vocabmate.infrastructure.rapidapi.wordsapi
 
-import github.io.vocabmate.domain.words.Vocab
-import github.io.vocabmate.domain.words.WordsService
+import github.io.vocabmate.domain.vocabs.Vocab
+import github.io.vocabmate.domain.vocabs.VocabService
+import github.io.vocabmate.infrastructure.rapidapi.RapidApiConfigProps
 import github.io.vocabmate.logger
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.client.RxHttpClient
@@ -17,13 +18,13 @@ import javax.inject.Singleton
 @Singleton
 @Named("words-api")
 class WordsApiClient(
-    @Client("\${rapid-api.words-api-url}")
+    @Client("\${rapidapi.words-api-url}")
     private val httpClient: RxHttpClient,
     private val rapidApiConfigProps: RapidApiConfigProps
-) : WordsService {
+) : VocabService {
     private val log = logger()
 
-    override fun getWords(value: String): Flowable<Vocab> {
+    override fun getVocab(value: String): Flowable<Vocab> {
         val response = invoke(value)
         log.debug("WordsAPI responds $response")
         return response.flatMap { wordsResponse ->

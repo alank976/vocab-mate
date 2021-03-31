@@ -1,4 +1,4 @@
-package github.io.vocabmate.domain.words
+package github.io.vocabmate.domain.vocabs
 
 import io.micronaut.core.annotation.Introspected
 

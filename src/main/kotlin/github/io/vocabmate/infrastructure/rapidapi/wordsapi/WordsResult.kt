@@ -1,6 +1,6 @@
-package github.io.vocabmate.infrastructure
+package github.io.vocabmate.infrastructure.rapidapi.wordsapi
 
-import github.io.vocabmate.domain.words.Vocab
+import github.io.vocabmate.domain.vocabs.Vocab
 import io.micronaut.core.annotation.Creator
 import io.micronaut.core.annotation.Introspected
 

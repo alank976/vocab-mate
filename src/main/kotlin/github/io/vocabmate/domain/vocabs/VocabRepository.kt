@@ -1,6 +1,5 @@
 package github.io.vocabmate.domain.vocabs
 
-import github.io.vocabmate.domain.words.Vocab
 import io.reactivex.rxjava3.core.Flowable
 
 interface VocabRepository {

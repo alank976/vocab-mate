@@ -1,7 +1,7 @@
 package github.io
 
 import github.io.vocabmate.domain.vocabs.VocabRepository
-import github.io.vocabmate.domain.words.Vocab
+import github.io.vocabmate.domain.vocabs.Vocab
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import io.micronaut.runtime.EmbeddedApplication

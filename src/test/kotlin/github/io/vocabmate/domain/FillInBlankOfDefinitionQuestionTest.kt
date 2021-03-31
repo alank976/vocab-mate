@@ -1,7 +1,7 @@
 package github.io.vocabmate.domain
 
 import github.io.vocabmate.domain.questions.Question
-import github.io.vocabmate.domain.words.Vocab
+import github.io.vocabmate.domain.vocabs.Vocab
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.ints.shouldBeExactly

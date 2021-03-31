@@ -1,6 +1,6 @@
 package github.io.vocabmate.domain.questions
 
-import github.io.vocabmate.domain.words.Vocab
+import github.io.vocabmate.domain.vocabs.Vocab
 
 sealed class Question(val vocab: Vocab, val creditPoint: Int) {
     abstract fun question(): String

@@ -1,4 +1,4 @@
-package github.io.vocabmate.infrastructure
+package github.io.vocabmate.infrastructure.rapidapi.wordsapi
 
 import io.micronaut.core.annotation.Creator
 import io.micronaut.core.annotation.Introspected
