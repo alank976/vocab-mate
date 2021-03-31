@@ -15,7 +15,7 @@ class VocabMateTest(private val application: EmbeddedApplication<*>) : StringSpe
         assert(application.isRunning)
     }
 
-    "test repo" {
+    "test fauna graphql repo impl works" {
         val vocabRepository = application.applicationContext.getBean(VocabRepository::class.java)
         val newVocab = Vocab(
             word = "repository",

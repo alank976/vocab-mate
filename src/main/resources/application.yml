@@ -2,12 +2,12 @@ micronaut:
   application:
     name: vocab-mate
 
-rapid-api:
+rapidapi:
   api-key-header: X-Rapidapi-Key
-  api-key: <changeme>
+  api-key: ${RAPIDAPI_API_KEY}
   urban-dict-url: https://mashape-community-urban-dictionary.p.rapidapi.comó
   words-api-url: https://wordsapiv1.p.rapidapi.com
 
 fauna:
   graphql-url: https://graphql.fauna.com/graphql
-  api-key: <changeme>
+  api-key: ${FAUNA_API_KEY}

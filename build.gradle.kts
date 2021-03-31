@@ -113,7 +113,7 @@ graphql {
     client {
         packageName = graphqlGeneratedClientPackage
         endpoint = "https://graphql.fauna.com/graphql"
-        headers = mapOf("Authorization" to "bearer $faunaApiKey")
+        headers = mapOf("Authorization" to "bearer ${System.getenv("FAUNA_API_KEY")}")
         queryFileDirectory = project.projectDir.resolve("src/main/resources/graphql").path
     }
 }
