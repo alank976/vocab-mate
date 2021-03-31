@@ -1,0 +1,15 @@
+query AllVocabsQuery {
+    allVocabs {
+        data {
+            _id
+            _ts
+            antonyms
+            definition
+            examples
+            partOfSpeech
+            synonyms
+            word
+        }
+    }
+}
+

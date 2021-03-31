@@ -1,0 +1,12 @@
+mutation CreateVocabMutation($v:VocabInput!) {
+    createVocab(data: $v) {
+        _id
+        _ts
+        antonyms
+        definition
+        examples
+        partOfSpeech
+        synonyms
+        word
+    }
+}

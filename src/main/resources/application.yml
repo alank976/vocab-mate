@@ -7,3 +7,7 @@ rapid-api:
   api-key: <changeme>
   urban-dict-url: https://mashape-community-urban-dictionary.p.rapidapi.comó
   words-api-url: https://wordsapiv1.p.rapidapi.com
+
+fauna:
+  graphql-url: https://graphql.fauna.com/graphql
+  api-key: <changeme>
