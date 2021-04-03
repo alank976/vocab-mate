@@ -4,7 +4,6 @@ plugins {
     id("org.jetbrains.kotlin.plugin.allopen") version "1.4.10"
     id("com.github.johnrengelman.shadow") version "6.1.0"
     id("io.micronaut.application") version "1.4.2"
-    id("com.expediagroup.graphql") version "4.0.0-alpha.17"
 }
 
 version = "0.1"
@@ -46,10 +45,8 @@ dependencies {
     implementation("io.micronaut.kotlin:micronaut-kotlin-extension-functions")
     implementation("io.micronaut.rxjava3:micronaut-rxjava3")
     implementation("io.micronaut.jaxrs:micronaut-jaxrs-server")
-//    graphQL codegen
-    implementation("com.expediagroup:graphql-kotlin-client:$expediaGraphqlClientVersion")
-    implementation("com.expediagroup:graphql-kotlin-spring-client:$expediaGraphqlClientVersion")
-    implementation("com.expediagroup:graphql-kotlin-ktor-client:$expediaGraphqlClientVersion")
+
+    implementation("com.faunadb:faunadb-java:4.0.1")
 
     runtimeOnly("ch.qos.logback:logback-classic")
     runtimeOnly("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -81,39 +78,5 @@ tasks {
     }
     test {
         useJUnitPlatform()
-    }
-
-    // band-aided solution for now
-    graphqlGenerateClient {
-        doLast {
-            val targetPattern = Regex("^import.*generated.((?!enums).).*__UNKNOWN_VALUE$")
-            outputs.files.first()
-                .walkTopDown()
-                .filter { f -> f.isFile && f.readLines().any { line -> line.contains(targetPattern) } }
-                .forEach { f ->
-                    val builder = f.readLines()
-                        .fold(StringBuilder()) { builder, line ->
-                            builder
-                                .takeUnless { line.contains(targetPattern) }
-                                ?.append(line)?.append("\n")
-                                ?: builder
-                        }
-                    val originalPath = f.path
-                    f.delete()
-                    File(originalPath).apply {
-                        writeText(builder.toString())
-                        createNewFile()
-                    }
-                }
-        }
-    }
-}
-
-graphql {
-    client {
-        packageName = graphqlGeneratedClientPackage
-        endpoint = "https://graphql.fauna.com/graphql"
-        headers = mapOf("Authorization" to "bearer ${System.getenv("FAUNA_API_KEY")}")
-        queryFileDirectory = project.projectDir.resolve("src/main/resources/graphql").path
     }
 }

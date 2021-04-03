@@ -1,5 +1,7 @@
 package github.io.vocabmate.domain.vocabs
 
+import com.faunadb.client.types.FaunaConstructor
+import com.faunadb.client.types.FaunaField
 import io.micronaut.core.annotation.Introspected
 
 @Introspected
@@ -9,8 +11,28 @@ data class Vocab(
     val definition: String,
     val examples: List<String> = emptyList(),
     val synonyms: List<String> = emptyList(),
-    val antonyms: List<String> = emptyList()
+    val antonyms: List<String> = emptyList(),
 ) {
+
+    companion object {
+        @JvmStatic
+        @FaunaConstructor
+        fun fromFauna(
+            @FaunaField("word") word: String,
+            @FaunaField("partOfSpeech") partOfSpeech: String,
+            @FaunaField("definition") definition: String,
+            @FaunaField("examples") examples: List<String>?,
+            @FaunaField("synonyms") synonyms: List<String>?,
+            @FaunaField("antonyms") antonyms: List<String>?,
+        ) = Vocab(
+            word = word,
+            partOfSpeech = PartOfSpeech.valueOf(partOfSpeech),
+            definition = definition,
+            examples = examples ?: emptyList(),
+            synonyms = synonyms ?: emptyList(),
+            antonyms = antonyms ?: emptyList(),
+        )
+    }
 
     @Introspected
     enum class PartOfSpeech(val shortForm: String) {
