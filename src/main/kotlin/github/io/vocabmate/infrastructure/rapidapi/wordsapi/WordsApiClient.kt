@@ -1,14 +1,14 @@
 package github.io.vocabmate.infrastructure.rapidapi.wordsapi
 
+import github.io.vocabmate.domain.vocabs.DictionaryService
 import github.io.vocabmate.domain.vocabs.Vocab
-import github.io.vocabmate.domain.vocabs.VocabService
 import github.io.vocabmate.infrastructure.rapidapi.RapidApiConfigProps
 import github.io.vocabmate.logger
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.client.RxHttpClient
 import io.micronaut.http.client.annotation.Client
 import io.micronaut.http.uri.UriBuilder
-import io.reactivex.Flowable
+import io.reactivex.rxjava3.core.Flowable
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -20,12 +20,12 @@ import javax.inject.Singleton
 class WordsApiClient(
     @Client("\${rapidapi.words-api-url}")
     private val httpClient: RxHttpClient,
-    private val rapidApiConfigProps: RapidApiConfigProps
-) : VocabService {
+    private val rapidApiConfigProps: RapidApiConfigProps,
+) : DictionaryService {
     private val log = logger()
 
-    override fun getVocab(value: String): Flowable<Vocab> {
-        val response = invoke(value)
+    override fun getVocab(vocab: String): Flowable<Vocab> {
+        val response = invoke(vocab)
         log.debug("WordsAPI responds $response")
         return response.flatMap { wordsResponse ->
             Flowable.fromIterable(wordsResponse.results).map {
@@ -41,6 +41,7 @@ class WordsApiClient(
             .let { uri ->
                 HttpRequest.GET<Any>(uri).header(rapidApiConfigProps.apiKeyHeader, rapidApiConfigProps.apiKey)
             }
+
         return httpClient.exchange(request, WordsResponse::class.java)
             .map { response ->
                 response.header("X-RateLimit-requests-Remaining")
@@ -53,5 +54,6 @@ class WordsApiClient(
                     }
                 response.body()!!
             }
+            .let { Flowable.fromPublisher(it) }
     }
 }

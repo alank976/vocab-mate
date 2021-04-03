@@ -1,14 +1,14 @@
 package github.io.vocabmate.infrastructure.rapidapi.urbandict
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import github.io.vocabmate.domain.vocabs.DictionaryService
 import github.io.vocabmate.domain.vocabs.Vocab
-import github.io.vocabmate.domain.vocabs.VocabService
 import github.io.vocabmate.logger
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.client.RxHttpClient
 import io.micronaut.http.client.annotation.Client
 import io.micronaut.http.uri.UriBuilder
-import io.reactivex.Flowable
+import io.reactivex.rxjava3.core.Flowable
 import java.time.LocalDateTime
 import javax.inject.Named
 import javax.inject.Singleton
@@ -18,12 +18,12 @@ import javax.inject.Singleton
 class UrbanDictClient(
     @Client("\${rapid-api.urban-dict-url}")
     private val httpClient: RxHttpClient,
-    private val rapidApiConfigProps: github.io.vocabmate.infrastructure.rapidapi.RapidApiConfigProps
-) : VocabService {
+    private val rapidApiConfigProps: github.io.vocabmate.infrastructure.rapidapi.RapidApiConfigProps,
+) : DictionaryService {
     private val log = logger()
 
-    override fun getVocab(value: String): Flowable<Vocab> {
-        val response = checkDict(value)
+    override fun getVocab(vocab: String): Flowable<Vocab> {
+        val response = checkDict(vocab)
         TODO("on hold due to mistmatch domain model too much")
     }
 
@@ -59,6 +59,6 @@ class UrbanDictClient(
         val writtenOn: LocalDateTime,
         val example: String,
         @JsonProperty("thumbs_down")
-        val thumbsDown: Int
+        val thumbsDown: Int,
     )
 }

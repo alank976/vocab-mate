@@ -36,6 +36,22 @@ class FaunaDriverVocabCollection(faunaConfigProps: FaunaConfigProps) : VocabRepo
             .let { Flowable.fromIterable(it) }
     }
 
+    override fun findByWord(word: String): Flowable<Vocab> {
+        return fql {
+            Map(
+                Paginate(Match(Index("findVocabsByWord"), Value(word))),
+                Lambda("x", Get(Var("x")))
+            )
+        }
+            .at("data")
+            .collect(VocabResponse::class.java)
+            .map {
+                log.info("found vocab ID={}", it.ref.id)
+                it.data
+            }
+            .let { Flowable.fromIterable(it) }
+    }
+
     override fun create(vocab: Vocab): Vocab {
         return fql {
             Create(
