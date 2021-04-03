@@ -11,8 +11,9 @@ import github.io.vocabmate.domain.vocabs.VocabRepository
 import github.io.vocabmate.logger
 import io.reactivex.rxjava3.core.Flowable
 import java.time.Instant
+import javax.inject.Singleton
 
-
+@Singleton
 class FaunaDriverVocabCollection(faunaConfigProps: FaunaConfigProps) : VocabRepository {
     private val log = logger()
     private val client: FaunaClient = FaunaClient.builder()
