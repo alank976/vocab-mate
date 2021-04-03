@@ -1,10 +1,12 @@
 package github.io.vocabmate.infrastructure.fauna
 
 import github.io.vocabmate.domain.vocabs.Vocab
+import io.kotest.core.annotation.Ignored
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.shouldBe
 
+@Ignored
 @Suppress("BlockingMethodInNonBlockingContext")
 class FaunaDriverVocabCollectionTest : StringSpec({
 

@@ -83,5 +83,6 @@ class FaunaDriverVocabCollection(faunaConfigProps: FaunaConfigProps) : VocabRepo
         }
     }
 
+    // TODO: make it rx
     private fun fql(f: () -> Expr) = client.query(f()).get()
 }
