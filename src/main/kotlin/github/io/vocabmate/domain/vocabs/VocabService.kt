@@ -29,11 +29,18 @@ class VocabService(
                 if (anyOutDated) emptyList() else accumulatedVocabs
             }
             .switchIfEmpty(
-                dictionaryService.getVocab(vocab)
-                    .map {
-                        //TODO: update instead
-                        vocabRepository.create(it)
+                vocabRepository.findByWord(vocab)
+                    .filter {
+                        it.run {
+                            vocabRepository.delete(id!!)
+                            false
+                        }
                     }
+                    .switchIfEmpty(dictionaryService.getVocab(vocab)
+                        .map {
+                            vocabRepository.create(it)
+                        }
+                    )
             )
     }
 }

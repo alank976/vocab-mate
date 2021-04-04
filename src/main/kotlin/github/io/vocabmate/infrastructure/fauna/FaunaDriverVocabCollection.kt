@@ -12,33 +12,46 @@ import io.reactivex.rxjava3.core.Flowable
 import java.time.Instant
 import javax.inject.Singleton
 
+private const val ALL_VOCABS_QUERY_INDEX = "allVocabs"
+private const val FIND_VOCABS_BY_WORD_QUERY_INDEX = "findVocabsByWord"
+private val COLLECTION = Collection("Vocab")
+
 @Singleton
 class FaunaDriverVocabCollection(faunaConfigProps: FaunaConfigProps) : VocabRepository {
     private val client: FaunaClient = FaunaClient.builder()
         .withSecret(faunaConfigProps.apiKey)
         .build()
 
-    override fun findAll(): Flowable<Vocab> = queryVocabsByIndexName("allVocabs")
+    override fun findAll(): Flowable<Vocab> {
+        return queryVocabsByIndexName(ALL_VOCABS_QUERY_INDEX)
+    }
 
-    override fun findByWord(word: String): Flowable<Vocab> = queryVocabsByIndexName("findVocabsByWord", word)
+    override fun findByWord(word: String): Flowable<Vocab> {
+        return queryVocabsByIndexName(FIND_VOCABS_BY_WORD_QUERY_INDEX, word)
+    }
 
     override fun create(vocab: Vocab): Vocab =
         fql {
-            Create(
-                Collection("Vocab"),
-                Obj("data", vocab.toFaunaObj())
-            )
+            Create(COLLECTION, Obj("data", vocab.toFaunaObj()))
         }
             .get(VocabResponse::class.java)
             .run { toVocab() }
 
+    override fun delete(id: String) {
+        fql {
+            Delete(Ref(COLLECTION, Value(id)))
+        }
+    }
+
     private fun queryVocabsByIndexName(indexName: String, vararg words: String): Flowable<Vocab> {
-        val paramValue = words.takeIf { it.size > 1 }
-            ?.run { Arr(map { word -> Value(word) }) }
-            ?: Value(words.first())
+        val matchStatement = when (words.size) {
+            0 -> Match(Index(indexName))
+            1 -> Match(Index(indexName), Value(words.single()))
+            else -> Match(Index(indexName), Arr(words.map { w -> Value(w) }))
+        }
         return fql {
             Map(
-                Paginate(Match(Index(indexName), paramValue)),
+                Paginate(matchStatement),
                 Lambda("x", Get(Var("x")))
             )
         }

@@ -6,4 +6,5 @@ interface VocabRepository {
     fun findAll(): Flowable<Vocab>
     fun findByWord(word: String): Flowable<Vocab>
     fun create(vocab: Vocab): Vocab
+    fun delete(id: String)
 }

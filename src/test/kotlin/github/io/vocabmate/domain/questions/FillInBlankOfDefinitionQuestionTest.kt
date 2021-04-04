@@ -1,6 +1,5 @@
-package github.io.vocabmate.domain
+package github.io.vocabmate.domain.questions
 
-import github.io.vocabmate.domain.questions.Question
 import github.io.vocabmate.domain.vocabs.Vocab
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldHaveSize
