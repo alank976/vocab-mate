@@ -2,6 +2,9 @@ micronaut:
   application:
     name: vocab-mate
 
+vocab:
+  expiry: 2h
+
 rapidapi:
   api-key-header: X-Rapidapi-Key
   api-key: ${RAPIDAPI_API_KEY}

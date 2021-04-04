@@ -30,6 +30,7 @@ micronaut {
 dependencies {
     kapt("io.micronaut.jaxrs:micronaut-jaxrs-processor")
     kapt("io.micronaut.openapi:micronaut-openapi")
+    annotationProcessor("io.micronaut:micronaut-graal")
     implementation("io.swagger.core.v3:swagger-annotations")
     kaptTest("io.micronaut.jaxrs:micronaut-jaxrs-processor")
     compileOnly("org.graalvm.nativeimage:svm")

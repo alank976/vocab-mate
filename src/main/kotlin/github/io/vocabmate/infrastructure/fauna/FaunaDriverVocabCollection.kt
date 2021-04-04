@@ -8,66 +8,48 @@ import com.faunadb.client.types.FaunaField
 import com.faunadb.client.types.Value
 import github.io.vocabmate.domain.vocabs.Vocab
 import github.io.vocabmate.domain.vocabs.VocabRepository
-import github.io.vocabmate.logger
 import io.reactivex.rxjava3.core.Flowable
 import java.time.Instant
 import javax.inject.Singleton
 
 @Singleton
 class FaunaDriverVocabCollection(faunaConfigProps: FaunaConfigProps) : VocabRepository {
-    private val log = logger()
     private val client: FaunaClient = FaunaClient.builder()
         .withSecret(faunaConfigProps.apiKey)
         .build()
 
-    override fun findAll(): Flowable<Vocab> {
-        return fql {
-            Map(
-                Paginate(Match(Index("allVocabs"))),
-                Lambda("x", Get(Var("x")))
-            )
-        }
-            .at("data")
-            .collect(VocabResponse::class.java)
-            .map {
-                log.info("found vocab ID={}", it.ref.id)
-                it.data
-            }
-            .let { Flowable.fromIterable(it) }
-    }
+    override fun findAll(): Flowable<Vocab> = queryVocabsByIndexName("allVocabs")
 
-    override fun findByWord(word: String): Flowable<Vocab> {
-        return fql {
-            Map(
-                Paginate(Match(Index("findVocabsByWord"), Value(word))),
-                Lambda("x", Get(Var("x")))
-            )
-        }
-            .at("data")
-            .collect(VocabResponse::class.java)
-            .map {
-                log.info("found vocab ID={}", it.ref.id)
-                it.data
-            }
-            .let { Flowable.fromIterable(it) }
-    }
+    override fun findByWord(word: String): Flowable<Vocab> = queryVocabsByIndexName("findVocabsByWord", word)
 
-    override fun create(vocab: Vocab): Vocab {
-        return fql {
+    override fun create(vocab: Vocab): Vocab =
+        fql {
             Create(
                 Collection("Vocab"),
                 Obj("data", vocab.toFaunaObj())
             )
         }
             .get(VocabResponse::class.java)
-            .let {
-                log.info("created vocab ID={}", it.ref.id)
-                it.data
-            }
+            .run { toVocab() }
+
+    private fun queryVocabsByIndexName(indexName: String, vararg words: String): Flowable<Vocab> {
+        val paramValue = words.takeIf { it.size > 1 }
+            ?.run { Arr(map { word -> Value(word) }) }
+            ?: Value(words.first())
+        return fql {
+            Map(
+                Paginate(Match(Index(indexName), paramValue)),
+                Lambda("x", Get(Var("x")))
+            )
+        }
+            .at("data")
+            .collect(VocabResponse::class.java)
+            .map { it.toVocab() }
+            .let { Flowable.fromIterable(it) }
     }
 
-    private fun Vocab.toFaunaObj(): Expr {
-        val map: Map<String, Expr> = mutableMapOf<String, Expr>()
+    private fun Vocab.toFaunaObj(): Expr =
+        mutableMapOf<String, Expr>()
             .apply {
                 put("word", Value(word))
                 put("partOfSpeech", Value(partOfSpeech.name))
@@ -76,8 +58,7 @@ class FaunaDriverVocabCollection(faunaConfigProps: FaunaConfigProps) : VocabRepo
                 synonyms.takeIf { it.isNotEmpty() }?.let { put("synonyms", Value(it)) }
                 antonyms.takeIf { it.isNotEmpty() }?.let { put("antonyms", Value(it)) }
             }
-        return Obj(map)
-    }
+            .let { Obj(it) }
 
     data class VocabResponse(
         val ref: Value.RefV,
@@ -86,6 +67,7 @@ class FaunaDriverVocabCollection(faunaConfigProps: FaunaConfigProps) : VocabRepo
     ) {
         companion object {
             @JvmStatic
+            @Suppress("unused")
             @FaunaConstructor
             fun fromFauna(
                 @FaunaField("ref") ref: Value.RefV,
@@ -97,6 +79,8 @@ class FaunaDriverVocabCollection(faunaConfigProps: FaunaConfigProps) : VocabRepo
                 data = data
             )
         }
+
+        fun toVocab() = data.run { copy(id = ref.id, lastUpdated = ts) }
     }
 
     // TODO: make it rx

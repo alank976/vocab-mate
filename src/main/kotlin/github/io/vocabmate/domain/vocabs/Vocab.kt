@@ -3,19 +3,23 @@ package github.io.vocabmate.domain.vocabs
 import com.faunadb.client.types.FaunaConstructor
 import com.faunadb.client.types.FaunaField
 import io.micronaut.core.annotation.Introspected
+import java.time.Instant
 
 @Introspected
 data class Vocab(
+    val id: String? = null,
     val word: String,
     val partOfSpeech: PartOfSpeech,
     val definition: String,
     val examples: List<String> = emptyList(),
     val synonyms: List<String> = emptyList(),
     val antonyms: List<String> = emptyList(),
+    val lastUpdated: Instant? = null,
 ) {
 
     companion object {
         @JvmStatic
+        @Suppress("unused")
         @FaunaConstructor
         fun fromFauna(
             @FaunaField("word") word: String,
