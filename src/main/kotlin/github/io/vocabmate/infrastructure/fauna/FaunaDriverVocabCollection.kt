@@ -19,6 +19,7 @@ private val COLLECTION = Collection("Vocab")
 @Singleton
 class FaunaDriverVocabCollection(faunaConfigProps: FaunaConfigProps) : VocabRepository {
     private val client: FaunaClient = FaunaClient.builder()
+        .apply { faunaConfigProps.endpoint?.let { e -> withEndpoint(e) } }
         .withSecret(faunaConfigProps.apiKey)
         .build()
 

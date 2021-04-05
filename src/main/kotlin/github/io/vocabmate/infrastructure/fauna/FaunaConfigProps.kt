@@ -5,6 +5,6 @@ import io.micronaut.context.annotation.ConfigurationProperties
 
 @ConfigurationProperties("fauna")
 data class FaunaConfigProps(
-    var graphqlUrl: String? = null,
+    var endpoint: String? = null,
     var apiKey: String? = null
 )

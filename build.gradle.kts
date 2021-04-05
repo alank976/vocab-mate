@@ -54,6 +54,7 @@ dependencies {
 
     testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
     testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
+    testImplementation("io.kotest:kotest-extensions-testcontainers:$kotestVersion")
 }
 
 
