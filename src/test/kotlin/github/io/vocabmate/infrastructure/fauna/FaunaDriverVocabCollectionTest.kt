@@ -18,8 +18,8 @@ import org.slf4j.Logger
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.wait.strategy.Wait
 import java.net.URL
+import java.time.Duration
 import kotlin.time.ExperimentalTime
-import kotlin.time.minutes
 import kotlin.time.seconds
 
 @ExperimentalTime
@@ -35,7 +35,7 @@ class FaunaDriverVocabCollectionTest : StringSpec({
         definition = "not important")
 
     beforeSpec {
-        eventually(5.minutes) {
+        eventually(30.seconds) {
             faunadbContainer.createDatabase("vocab-mate")
         }
         secret = faunadbContainer.createSecret("vocab-mate")
@@ -83,6 +83,7 @@ class FaunaDriverVocabCollectionTest : StringSpec({
         private fun setupFaunadbContainer(): GenericContainer<Nothing> =
             GenericContainer<Nothing>("fauna/faunadb:latest")
                 .apply {
+                    withStartupTimeout(Duration.ofMinutes(1))
                     waitingFor(Wait.forLogMessage(".*FaunaDB is ready.*", 1))
                     portBindings = listOf("8443:8443", "8084:8084")
                 }
