@@ -19,6 +19,7 @@ import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.wait.strategy.Wait
 import java.net.URL
 import kotlin.time.ExperimentalTime
+import kotlin.time.minutes
 import kotlin.time.seconds
 
 @ExperimentalTime
@@ -34,7 +35,7 @@ class FaunaDriverVocabCollectionTest : StringSpec({
         definition = "not important")
 
     beforeSpec {
-        eventually(30.seconds) {
+        eventually(5.minutes) {
             faunadbContainer.createDatabase("vocab-mate")
         }
         secret = faunadbContainer.createSecret("vocab-mate")
