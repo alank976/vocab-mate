@@ -26,51 +26,54 @@ import kotlin.time.seconds
 @Suppress("BlockingMethodInNonBlockingContext")
 class FaunaDriverVocabCollectionTest : StringSpec({
     var secret: String? = null
-    val faunadbContainer: GenericContainer<Nothing> = setupFaunadbContainer()
-    listener(faunadbContainer.perSpec())
+    val busyBoxContainer = GenericContainer<Nothing>("busybox").withCommand("tail -f /dev/null")
+//    val faunadbContainer: GenericContainer<Nothing> = setupFaunadbContainer()
+//    listener(faunadbContainer.perSpec())
+    listener(busyBoxContainer.perSpec())
 
     val givenVocab = Vocab(
         word = "foo",
         partOfSpeech = Vocab.PartOfSpeech.Noun,
         definition = "not important")
 
-    beforeSpec {
-        eventually(30.seconds) {
-            faunadbContainer.createDatabase("vocab-mate")
-        }
-        secret = faunadbContainer.createSecret("vocab-mate")
-            .also { log.info("Created key secret={}", it) }
-
-        uploadGraphQLSchemaForIndexes(secret!!)
-    }
+//    beforeSpec {
+//        eventually(30.seconds) {
+//            faunadbContainer.createDatabase("vocab-mate")
+//        }
+//        secret = faunadbContainer.createSecret("vocab-mate")
+//            .also { log.info("Created key secret={}", it) }
+//
+//        uploadGraphQLSchemaForIndexes(secret!!)
+//    }
 
 
     "fql findAll works" {
-        val result = createInstance(secret!!).findAll().blockingIterable().toList()
-        result.shouldBeEmpty()
+        Thread.sleep(60 * 1000)
+//        val result = createInstance(secret!!).findAll().blockingIterable().toList()
+//        result.shouldBeEmpty()
     }
 
     "fql create vocab works" {
-        val result = createInstance(secret!!).create(givenVocab)
-        result.shouldBeEqualToIgnoringFields(givenVocab, Vocab::id, Vocab::lastUpdated)
+//        val result = createInstance(secret!!).create(givenVocab)
+//        result.shouldBeEqualToIgnoringFields(givenVocab, Vocab::id, Vocab::lastUpdated)
     }
 
     "findByWord works" {
-        val result = createInstance(secret!!).findByWord("foo")
-            .blockingIterable().toList()
-        result.single().should {
-            it.shouldBeEqualToIgnoringFields(givenVocab, Vocab::id, Vocab::lastUpdated)
-            it.id shouldNotBe null
-            it.lastUpdated shouldNotBe null
-        }
+//        val result = createInstance(secret!!).findByWord("foo")
+//            .blockingIterable().toList()
+//        result.single().should {
+//            it.shouldBeEqualToIgnoringFields(givenVocab, Vocab::id, Vocab::lastUpdated)
+//            it.id shouldNotBe null
+//            it.lastUpdated shouldNotBe null
+//        }
     }
 
     "delete works" {
-        val faunaDriverVocabCollection = createInstance(secret!!)
-        val allFoundVocabs = faunaDriverVocabCollection.findAll().blockingIterable()
-        allFoundVocabs shouldHaveSize 1
-        faunaDriverVocabCollection.delete(allFoundVocabs.single().id!!)
-        faunaDriverVocabCollection.findAll().count().blockingGet() shouldBe 0
+//        val faunaDriverVocabCollection = createInstance(secret!!)
+//        val allFoundVocabs = faunaDriverVocabCollection.findAll().blockingIterable()
+//        allFoundVocabs shouldHaveSize 1
+//        faunaDriverVocabCollection.delete(allFoundVocabs.single().id!!)
+//        faunaDriverVocabCollection.findAll().count().blockingGet() shouldBe 0
     }
 }) {
     companion object {
