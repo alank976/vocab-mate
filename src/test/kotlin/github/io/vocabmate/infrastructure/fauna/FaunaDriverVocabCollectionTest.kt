@@ -2,15 +2,8 @@ package github.io.vocabmate.infrastructure.fauna
 
 import github.io.vocabmate.domain.vocabs.Vocab
 import github.io.vocabmate.logger
-import io.kotest.assertions.timing.eventually
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.extensions.testcontainers.perSpec
-import io.kotest.matchers.collections.shouldBeEmpty
-import io.kotest.matchers.collections.shouldHaveSize
-import io.kotest.matchers.equality.shouldBeEqualToIgnoringFields
-import io.kotest.matchers.should
-import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.MediaType
 import io.micronaut.http.client.netty.DefaultHttpClient
@@ -20,7 +13,6 @@ import org.testcontainers.containers.wait.strategy.Wait
 import java.net.URL
 import java.time.Duration
 import kotlin.time.ExperimentalTime
-import kotlin.time.seconds
 
 @ExperimentalTime
 @Suppress("BlockingMethodInNonBlockingContext")
@@ -88,7 +80,7 @@ class FaunaDriverVocabCollectionTest : StringSpec({
                 .apply {
                     withStartupTimeout(Duration.ofMinutes(1))
                     waitingFor(Wait.forLogMessage(".*FaunaDB is ready.*", 1))
-//                    portBindings = listOf("8443:8443", "8084:8084")
+                    addExposedPorts(8443, 8084)
                 }
 
         @JvmStatic
