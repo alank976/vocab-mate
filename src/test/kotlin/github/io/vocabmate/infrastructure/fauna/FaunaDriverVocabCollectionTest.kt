@@ -27,8 +27,8 @@ import kotlin.time.seconds
 class FaunaDriverVocabCollectionTest : StringSpec({
     var secret: String? = null
     val busyBoxContainer = GenericContainer<Nothing>("busybox").apply { withCommand("tail -f /dev/null") }
-//    val faunadbContainer: GenericContainer<Nothing> = setupFaunadbContainer()
-//    listener(faunadbContainer.perSpec())
+    val faunadbContainer: GenericContainer<Nothing> = setupFaunadbContainer()
+    listener(faunadbContainer.perSpec())
     listener(busyBoxContainer.perSpec())
 
     val givenVocab = Vocab(
