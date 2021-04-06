@@ -26,7 +26,7 @@ import kotlin.time.seconds
 @Suppress("BlockingMethodInNonBlockingContext")
 class FaunaDriverVocabCollectionTest : StringSpec({
     var secret: String? = null
-    val busyBoxContainer = GenericContainer<Nothing>("busybox").withCommand("tail -f /dev/null")
+    val busyBoxContainer = GenericContainer<Nothing>("busybox").apply { withCommand("tail -f /dev/null") }
 //    val faunadbContainer: GenericContainer<Nothing> = setupFaunadbContainer()
 //    listener(faunadbContainer.perSpec())
     listener(busyBoxContainer.perSpec())
@@ -38,7 +38,7 @@ class FaunaDriverVocabCollectionTest : StringSpec({
 
 //    beforeSpec {
 //        eventually(30.seconds) {
-//            faunadbContainer.createDatabase("vocab-mate")
+//            faunadbContainer.createDatabase("FaunaDriverVocabCollectionTest.kt:29vocab-mate")
 //        }
 //        secret = faunadbContainer.createSecret("vocab-mate")
 //            .also { log.info("Created key secret={}", it) }
