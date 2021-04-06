@@ -88,7 +88,7 @@ class FaunaDriverVocabCollectionTest : StringSpec({
                 .apply {
                     withStartupTimeout(Duration.ofMinutes(1))
                     waitingFor(Wait.forLogMessage(".*FaunaDB is ready.*", 1))
-                    portBindings = listOf("8443:8443", "8084:8084")
+//                    portBindings = listOf("8443:8443", "8084:8084")
                 }
 
         @JvmStatic
