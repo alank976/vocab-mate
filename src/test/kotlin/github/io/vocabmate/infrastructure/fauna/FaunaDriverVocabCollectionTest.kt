@@ -5,6 +5,12 @@ import github.io.vocabmate.logger
 import io.kotest.assertions.timing.eventually
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.extensions.testcontainers.perSpec
+import io.kotest.matchers.collections.shouldBeEmpty
+import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.equality.shouldBeEqualToIgnoringFields
+import io.kotest.matchers.should
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.MediaType
 import io.micronaut.http.client.netty.DefaultHttpClient
@@ -20,9 +26,9 @@ import kotlin.time.seconds
 @Suppress("BlockingMethodInNonBlockingContext")
 class FaunaDriverVocabCollectionTest : StringSpec({
     val faunadbContainer: GenericContainer<Nothing> = setupFaunadbContainer()
-    var secret: String? = null
     var graphqlImportPort = 8084
-    var generalImportPort = 8443
+    var generalPort = 8443
+    var faunaDriverVocabCollection: FaunaDriverVocabCollection? = null
     listener(faunadbContainer.perSpec())
 
     val givenVocab = Vocab(
@@ -32,46 +38,49 @@ class FaunaDriverVocabCollectionTest : StringSpec({
 
     beforeSpec {
         graphqlImportPort = graphqlImportPort.run { faunadbContainer.getMappedPort(this) }
-        generalImportPort = generalImportPort.run { faunadbContainer.getMappedPort(this) }
-        log.info("ports=[{}, {}]", graphqlImportPort, generalImportPort)
+        generalPort = generalPort.run { faunadbContainer.getMappedPort(this) }
+        log.info("ports=[{}, {}]", graphqlImportPort, generalPort)
 
         eventually(30.seconds) {
             faunadbContainer.createDatabase("vocab-mate")
         }
-        secret = faunadbContainer.createSecret("vocab-mate")
+        val secret = faunadbContainer.createSecret("vocab-mate")
             .also { log.info("Created key secret={}", it) }
 
-        uploadGraphQLSchemaForIndexes(secret!!, graphqlImportPort)
+        uploadGraphQLSchemaForIndexes(secret, graphqlImportPort)
+
+        faunaDriverVocabCollection = FaunaDriverVocabCollection(
+            FaunaConfigProps(
+                endpoint = "http://localhost:$generalPort",
+                apiKey = secret
+            ))
     }
 
-
     "fql findAll works" {
-        Thread.sleep(10 * 1000)
-//        val result = createInstance(secret!!).findAll().blockingIterable().toList()
-//        result.shouldBeEmpty()
+        val result = faunaDriverVocabCollection!!.findAll().blockingIterable().toList()
+        result.shouldBeEmpty()
     }
 
     "fql create vocab works" {
-//        val result = createInstance(secret!!).create(givenVocab)
-//        result.shouldBeEqualToIgnoringFields(givenVocab, Vocab::id, Vocab::lastUpdated)
+        val result = faunaDriverVocabCollection!!.create(givenVocab)
+        result.shouldBeEqualToIgnoringFields(givenVocab, Vocab::id, Vocab::lastUpdated)
     }
 
     "findByWord works" {
-//        val result = createInstance(secret!!).findByWord("foo")
-//            .blockingIterable().toList()
-//        result.single().should {
-//            it.shouldBeEqualToIgnoringFields(givenVocab, Vocab::id, Vocab::lastUpdated)
-//            it.id shouldNotBe null
-//            it.lastUpdated shouldNotBe null
-//        }
+        val result = faunaDriverVocabCollection!!.findByWord("foo")
+            .blockingIterable().toList()
+        result.single().should {
+            it.shouldBeEqualToIgnoringFields(givenVocab, Vocab::id, Vocab::lastUpdated)
+            it.id shouldNotBe null
+            it.lastUpdated shouldNotBe null
+        }
     }
 
     "delete works" {
-//        val faunaDriverVocabCollection = createInstance(secret!!)
-//        val allFoundVocabs = faunaDriverVocabCollection.findAll().blockingIterable()
-//        allFoundVocabs shouldHaveSize 1
-//        faunaDriverVocabCollection.delete(allFoundVocabs.single().id!!)
-//        faunaDriverVocabCollection.findAll().count().blockingGet() shouldBe 0
+        val allFoundVocabs = faunaDriverVocabCollection!!.findAll().blockingIterable()
+        allFoundVocabs shouldHaveSize 1
+        faunaDriverVocabCollection!!.delete(allFoundVocabs.single().id!!)
+        faunaDriverVocabCollection!!.findAll().count().blockingGet() shouldBe 0
     }
 }) {
     companion object {
@@ -123,12 +132,6 @@ class FaunaDriverVocabCollectionTest : StringSpec({
                 log.info("Import GraphQL Schema response is: {}", resp.status())
             }) { err -> throw IllegalStateException("Failed to import GraphQL schema", err) }
         }
-
-        @JvmStatic
-        private fun createInstance(secret: String) = FaunaDriverVocabCollection(FaunaConfigProps(
-            endpoint = "http://localhost:8443",
-            apiKey = secret
-        ))
     }
 }
 
