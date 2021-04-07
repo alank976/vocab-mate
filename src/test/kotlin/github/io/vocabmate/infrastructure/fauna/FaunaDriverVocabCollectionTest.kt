@@ -2,6 +2,7 @@ package github.io.vocabmate.infrastructure.fauna
 
 import github.io.vocabmate.domain.vocabs.Vocab
 import github.io.vocabmate.logger
+import io.kotest.assertions.timing.eventually
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.extensions.testcontainers.perSpec
 import io.micronaut.http.HttpRequest
@@ -13,34 +14,39 @@ import org.testcontainers.containers.wait.strategy.Wait
 import java.net.URL
 import java.time.Duration
 import kotlin.time.ExperimentalTime
+import kotlin.time.seconds
 
 @ExperimentalTime
 @Suppress("BlockingMethodInNonBlockingContext")
 class FaunaDriverVocabCollectionTest : StringSpec({
-    var secret: String? = null
-    val busyBoxContainer = GenericContainer<Nothing>("busybox").apply { withCommand("tail -f /dev/null") }
     val faunadbContainer: GenericContainer<Nothing> = setupFaunadbContainer()
+    var secret: String? = null
+    var graphqlImportPort = 8084
+    var generalImportPort = 8443
     listener(faunadbContainer.perSpec())
-    listener(busyBoxContainer.perSpec())
 
     val givenVocab = Vocab(
         word = "foo",
         partOfSpeech = Vocab.PartOfSpeech.Noun,
         definition = "not important")
 
-//    beforeSpec {
-//        eventually(30.seconds) {
-//            faunadbContainer.createDatabase("FaunaDriverVocabCollectionTest.kt:29vocab-mate")
-//        }
-//        secret = faunadbContainer.createSecret("vocab-mate")
-//            .also { log.info("Created key secret={}", it) }
-//
-//        uploadGraphQLSchemaForIndexes(secret!!)
-//    }
+    beforeSpec {
+        graphqlImportPort = graphqlImportPort.run { faunadbContainer.getMappedPort(this) }
+        generalImportPort = generalImportPort.run { faunadbContainer.getMappedPort(this) }
+        log.info("ports=[{}, {}]", graphqlImportPort, generalImportPort)
+
+        eventually(30.seconds) {
+            faunadbContainer.createDatabase("vocab-mate")
+        }
+        secret = faunadbContainer.createSecret("vocab-mate")
+            .also { log.info("Created key secret={}", it) }
+
+        uploadGraphQLSchemaForIndexes(secret!!, graphqlImportPort)
+    }
 
 
     "fql findAll works" {
-        Thread.sleep(60 * 1000)
+        Thread.sleep(10 * 1000)
 //        val result = createInstance(secret!!).findAll().blockingIterable().toList()
 //        result.shouldBeEmpty()
     }
@@ -106,15 +112,15 @@ class FaunaDriverVocabCollectionTest : StringSpec({
         }
 
         @JvmStatic
-        private fun uploadGraphQLSchemaForIndexes(secret: String) {
-            DefaultHttpClient(URL("http://localhost:8084")).let { client ->
+        private fun uploadGraphQLSchemaForIndexes(secret: String, port: Int) {
+            DefaultHttpClient(URL("http://localhost:$port")).let { client ->
                 val request =
-                    HttpRequest.POST("/import", FaunaDriverVocabCollectionTest.resource("/raw-schema.gql").readText())
+                    HttpRequest.POST("/import", resource("/raw-schema.gql").readText())
                         .bearerAuth(secret)
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED_TYPE)
                 client.exchange(request)
             }.blockingSubscribe({ resp ->
-                FaunaDriverVocabCollectionTest.log.info("Import GraphQL Schema response is: {}", resp.status())
+                log.info("Import GraphQL Schema response is: {}", resp.status())
             }) { err -> throw IllegalStateException("Failed to import GraphQL schema", err) }
         }
 
