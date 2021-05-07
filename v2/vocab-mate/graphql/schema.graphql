@@ -1,0 +1,51 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+scalar Long
+
+enum PartOfSpeech {
+  Noun
+  Verb
+  Adjective
+  Adverb
+}
+
+type Vocab {
+  synonyms: [String!]
+  examples: [String!]
+  antonyms: [String!]
+  _id: ID!
+  definition: String!
+  word: String!
+  partOfSpeech: PartOfSpeech!
+  _ts: Long!
+}
+
+input VocabInput {
+  word: String!
+  partOfSpeech: PartOfSpeech!
+  definition: String!
+  examples: [String!]
+  synonyms: [String!]
+  antonyms: [String!]
+}
+
+type VocabPage {
+  data: [Vocab!]!
+  after: String
+  before: String
+}
+
+type Query {
+  findVocabByID(id: ID!): Vocab
+  findVocabsByWord(_size: Int, _cursor: String, word: String!): VocabPage!
+  allVocabs(_size: Int, _cursor: String): VocabPage!
+}
+
+type Mutation {
+  createVocab(data: VocabInput!): Vocab!
+  updateVocab(id: ID!, data: VocabInput!): Vocab
+  deleteVocab(id: ID!): Vocab
+}

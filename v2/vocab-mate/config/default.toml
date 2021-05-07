@@ -1,0 +1,5 @@
+[faunadb]
+url = "https://graphql.fauna.com/graphql"
+
+[rapidapi]
+url = ""

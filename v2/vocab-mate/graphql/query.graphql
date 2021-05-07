@@ -1,0 +1,11 @@
+query FindOne($word: String!) {
+  findVocabsByWord(_size: 20, word: $word) {
+    data {
+      _id
+      word
+      partOfSpeech
+      definition
+      _ts
+    }
+  }
+}
