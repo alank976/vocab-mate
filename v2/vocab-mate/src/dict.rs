@@ -21,6 +21,9 @@ impl Dict for DictImpl {
         let mut results = self.fauna_client.look_up(vocab)?;
         let mut first = results.remove(0);
         first.word = first.word + "-test";
-        self.fauna_client.create(first).map(|x| vec![x])
+        let created = self.fauna_client.create(first).map(|x| vec![x])?;
+        let id = created.first().expect("no first").id.clone();
+        self.fauna_client.delete(id)?;
+        Ok(created)
     }
 }

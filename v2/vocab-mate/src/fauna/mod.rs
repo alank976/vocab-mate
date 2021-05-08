@@ -34,8 +34,12 @@ impl FaunaDbClient {
             .ok_or_else(|| anyhow!("successful create but no ID returned for {:?}", word))
     }
 
-    pub fn delete() {
-        todo!()
+    pub fn delete(&self, id: String) -> Result<()> {
+        let request_body =
+            graphql_gen::DeleteOne::build_query(graphql_gen::delete_one::Variables { id });
+        let _response_body: Response<graphql_gen::delete_one::ResponseData> =
+            self.request_graphql(request_body)?;
+        Ok(())
     }
 
     fn request_graphql<Request: Serialize, Response: DeserializeOwned>(
