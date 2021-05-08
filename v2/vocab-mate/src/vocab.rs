@@ -32,6 +32,7 @@ impl Vocab {
             examples: Vec::new(),
             synonyms: Vec::new(),
             antonyms: Vec::new(),
+            // TODO: map from DB
             last_updated: Local::now(),
         }
     }

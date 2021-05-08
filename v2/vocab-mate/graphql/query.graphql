@@ -1,4 +1,4 @@
-query FindOne($word: String!) {
+query FindQuery($word: String!) {
   findVocabsByWord(_size: 20, word: $word) {
     data {
       _id
@@ -7,5 +7,22 @@ query FindOne($word: String!) {
       definition
       _ts
     }
+  }
+}
+# TODO: try fragment?
+
+mutation CreateOne($input: VocabInput!) {
+  createVocab(data: $input) {
+    _id
+    word
+    partOfSpeech
+    definition
+    _ts
+  }
+}
+
+mutation DeleteOne($id: ID!) {
+  deleteVocab(id: $id) {
+    _id
   }
 }

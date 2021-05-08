@@ -1,18 +1,16 @@
 use actix_web::{
     error::ErrorInternalServerError,
     get,
-    web::{self, Data},
+    web::{Data, Path},
     HttpResponse, Responder,
 };
 
-use crate::{prelude::*, AppContext};
-
-use crate::fauna;
+use crate::{dict, prelude::*, AppContext};
 
 #[get("/vocabs/{vocab}")]
 pub async fn get_vocab(
-    vocab: web::Path<String>,
-    state: Data<AppContext<fauna::FaunaDbClient>>,
+    vocab: Path<String>,
+    state: Data<AppContext<dict::DictImpl>>,
 ) -> impl Responder {
     state
         .dict

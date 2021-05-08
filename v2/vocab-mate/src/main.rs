@@ -7,6 +7,7 @@ mod api;
 mod config;
 mod dict;
 mod fauna;
+mod rapidapi;
 mod vocab;
 
 pub mod prelude {
@@ -27,13 +28,15 @@ async fn main() -> Result<()> {
     .await
 }
 
-async fn create_app_context() -> Result<AppContext<fauna::FaunaDbClient>> {
+async fn create_app_context() -> Result<AppContext<dict::DictImpl>> {
     let config =
         config::Configs::new().map_err(|x| std::io::Error::new(std::io::ErrorKind::Other, x))?;
     let fauna_client = fauna::FaunaDbClient::new(config.faunadb.url, config.faunadb.api_key);
-    Ok(AppContext::new(fauna_client))
+    let dict_impl = dict::DictImpl::new(fauna_client);
+    Ok(AppContext::new(dict_impl))
 }
 
+// TODO: optimize not to clone
 #[derive(Clone)]
 pub struct AppContext<D>
 where
