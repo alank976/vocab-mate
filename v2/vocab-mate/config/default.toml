@@ -4,3 +4,6 @@ url = "https://graphql.fauna.com/graphql"
 [rapidapi]
 wordsapi_url = "https://wordsapiv1.p.rapidapi.com"
 api_key_header = "X-Rapidapi-Key"
+
+[vocab_mate]
+expiry = "2h"

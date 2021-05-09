@@ -38,7 +38,7 @@ async fn create_app_context() -> Result<AppContext<dict::DictImpl>> {
         config.rapidapi.api_key_header,
         config.rapidapi.api_key,
     );
-    let dict_impl = dict::DictImpl::new(fauna_client, words_api_client);
+    let dict_impl = dict::DictImpl::new(fauna_client, words_api_client, config.vocab_mate.expiry());
     Ok(AppContext::new(dict_impl))
 }
 
