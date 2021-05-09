@@ -1,5 +1,4 @@
 use crate::prelude::*;
-
 use anyhow::{anyhow, Result};
 use graphql_client::{GraphQLQuery, QueryBody, Response};
 use reqwest;
@@ -76,9 +75,13 @@ impl Dict for FaunaDbClient {
 }
 
 mod dto_mapping {
-
     use super::graphql_gen::{create_one, find_query};
     use crate::prelude::*;
+    use chrono::prelude::*;
+
+    fn to_local_datetime(micro_sec: i64) -> DateTime<Local> {
+        Local.timestamp_nanos(micro_sec * 1_000)
+    }
 
     impl From<Vocab> for create_one::Variables {
         fn from(vocab: Vocab) -> Self {
@@ -97,22 +100,26 @@ mod dto_mapping {
 
     impl From<create_one::CreateOneCreateVocab> for Vocab {
         fn from(data: create_one::CreateOneCreateVocab) -> Self {
+            let data = data.common_fields;
             Self::new(
                 data.id,
                 data.word,
                 data.part_of_speech.into(),
                 data.definition,
+                to_local_datetime(data.ts),
             )
         }
     }
 
     impl From<find_query::FindQueryFindVocabsByWordData> for Vocab {
         fn from(data: find_query::FindQueryFindVocabsByWordData) -> Self {
+            let data = data.common_fields;
             Self::new(
                 data.id,
                 data.word,
                 data.part_of_speech.into(),
                 data.definition,
+                to_local_datetime(data.ts),
             )
         }
     }

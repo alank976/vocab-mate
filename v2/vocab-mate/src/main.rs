@@ -18,6 +18,7 @@ pub mod prelude {
 
 #[actix_web::main]
 async fn main() -> Result<()> {
+    env_logger::init();
     HttpServer::new(|| {
         App::new()
             .data_factory(create_app_context)
