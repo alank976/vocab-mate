@@ -3,26 +3,26 @@ use serde::Serialize;
 
 #[derive(Debug, Serialize)]
 pub struct Vocab {
-    pub id: String,
+    pub id: Option<String>,
     pub word: String,
     pub(crate) part_of_speech: PartOfSpeech,
     pub definition: String,
-    pub examples: Vec<String>,
-    pub synonyms: Vec<String>,
-    pub antonyms: Vec<String>,
-    pub last_updated: DateTime<Local>,
+    pub examples: Option<Vec<String>>,
+    pub synonyms: Option<Vec<String>>,
+    pub antonyms: Option<Vec<String>>,
+    pub last_updated: Option<DateTime<Local>>,
 }
 
 impl Vocab {
     pub fn new(
-        id: String,
+        id: Option<String>,
         word: String,
         part_of_speech: PartOfSpeech,
         definition: String,
-        examples: Vec<String>,
-        synonyms: Vec<String>,
-        antonyms: Vec<String>,
-        last_updated: DateTime<Local>,
+        examples: Option<Vec<String>>,
+        synonyms: Option<Vec<String>>,
+        antonyms: Option<Vec<String>>,
+        last_updated: Option<DateTime<Local>>,
     ) -> Self {
         Self {
             id,
@@ -43,4 +43,16 @@ pub enum PartOfSpeech {
     Verb,
     Adjective,
     Adverb,
+}
+
+impl PartOfSpeech {
+    pub fn from(s: String) -> Option<Self> {
+        match s.to_lowercase().as_str() {
+            "noun" => Some(Self::Noun),
+            "verb" => Some(Self::Verb),
+            "adjective" => Some(Self::Adjective),
+            "adverb" => Some(Self::Adverb),
+            _ => None,
+        }
+    }
 }

@@ -33,7 +33,12 @@ async fn create_app_context() -> Result<AppContext<dict::DictImpl>> {
     let config =
         config::Configs::new().map_err(|x| std::io::Error::new(std::io::ErrorKind::Other, x))?;
     let fauna_client = fauna::FaunaDbClient::new(config.faunadb.url, config.faunadb.api_key);
-    let dict_impl = dict::DictImpl::new(fauna_client);
+    let words_api_client = rapidapi::WordsApiClient::new(
+        config.rapidapi.wordsapi_url,
+        config.rapidapi.api_key_header,
+        config.rapidapi.api_key,
+    );
+    let dict_impl = dict::DictImpl::new(fauna_client, words_api_client);
     Ok(AppContext::new(dict_impl))
 }
 

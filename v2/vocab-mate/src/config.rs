@@ -11,8 +11,16 @@ pub struct FaunadbConfig {
 }
 
 #[derive(Debug, Deserialize)]
+pub struct RapidApiConfig {
+    pub wordsapi_url: String,
+    pub api_key_header: String,
+    pub api_key: String,
+}
+
+#[derive(Debug, Deserialize)]
 pub struct Configs {
     pub faunadb: FaunadbConfig,
+    pub rapidapi: RapidApiConfig,
 }
 
 impl Configs {

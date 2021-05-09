@@ -1,6 +1,8 @@
 use crate::prelude::*;
 use anyhow::{anyhow, Result};
+use async_trait::async_trait;
 use graphql_client::{GraphQLQuery, QueryBody, Response};
+use log::debug;
 use reqwest;
 use serde::{de::DeserializeOwned, Serialize};
 
@@ -41,6 +43,18 @@ impl FaunaDbClient {
         Ok(())
     }
 
+    async fn surl_request_graphql<Request: Serialize, Response: DeserializeOwned>(
+        &self,
+        body: QueryBody<Request>,
+    ) -> surf::Result<Response> {
+        let foo: Response = surf::post(self.url.clone())
+            .header("Authorization", format!("Bearer {}", self.api_key))
+            .body(surf::Body::from_json(&body)?)
+            .recv_json()
+            .await?;
+        Ok(foo)
+    }
+
     fn request_graphql<Request: Serialize, Response: DeserializeOwned>(
         &self,
         body: QueryBody<Request>,
@@ -56,13 +70,31 @@ impl FaunaDbClient {
         Ok(response_body)
     }
 }
-
+#[async_trait]
 impl Dict for FaunaDbClient {
     fn look_up(&self, vocab: String) -> Result<Vec<Vocab>> {
         let request_body =
             graphql_gen::FindQuery::build_query(graphql_gen::find_query::Variables { word: vocab });
         let response_body: Response<graphql_gen::find_query::ResponseData> =
             self.request_graphql(request_body)?;
+        let vocabs: Vec<Vocab> = response_body
+            .data
+            .map(|resp_d| {
+                let inner_vec = resp_d.find_vocabs_by_word.data;
+                inner_vec.into_iter().map(|data| data.into()).collect()
+            })
+            .unwrap_or_else(|| Vec::new());
+        Ok(vocabs)
+    }
+
+    async fn async_lookup(&self, vocab: String) -> Result<Vec<Vocab>> {
+        debug!("reach fauna");
+        let request_body =
+            graphql_gen::FindQuery::build_query(graphql_gen::find_query::Variables { word: vocab });
+        let response_body: Response<graphql_gen::find_query::ResponseData> = self
+            .surl_request_graphql(request_body)
+            .await
+            .map_err(|x| anyhow!(x))?;
         let vocabs: Vec<Vocab> = response_body
             .data
             .map(|resp_d| {
@@ -90,9 +122,9 @@ mod dto_mapping {
                     word: vocab.word.clone(),
                     part_of_speech: vocab.part_of_speech.into(),
                     definition: vocab.definition,
-                    examples: Some(vocab.examples),
-                    synonyms: Some(vocab.synonyms),
-                    antonyms: Some(vocab.antonyms),
+                    examples: vocab.examples,
+                    synonyms: vocab.synonyms,
+                    antonyms: vocab.antonyms,
                 },
             }
         }
@@ -102,14 +134,14 @@ mod dto_mapping {
         fn from(data: create_one::CreateOneCreateVocab) -> Self {
             let data = data.common_fields;
             Self::new(
-                data.id,
+                Some(data.id),
                 data.word,
                 data.part_of_speech.into(),
                 data.definition,
-                data.examples.unwrap_or_else(|| Vec::new()),
-                data.synonyms.unwrap_or_else(|| Vec::new()),
-                data.antonyms.unwrap_or_else(|| Vec::new()),
-                to_local_datetime(data.ts),
+                data.examples,
+                data.synonyms,
+                data.antonyms,
+                Some(to_local_datetime(data.ts)),
             )
         }
     }
@@ -118,14 +150,14 @@ mod dto_mapping {
         fn from(data: find_query::FindQueryFindVocabsByWordData) -> Self {
             let data = data.common_fields;
             Self::new(
-                data.id,
+                Some(data.id),
                 data.word,
                 data.part_of_speech.into(),
                 data.definition,
-                data.examples.unwrap_or_else(|| Vec::new()),
-                data.synonyms.unwrap_or_else(|| Vec::new()),
-                data.antonyms.unwrap_or_else(|| Vec::new()),
-                to_local_datetime(data.ts),
+                data.examples,
+                data.synonyms,
+                data.antonyms,
+                Some(to_local_datetime(data.ts)),
             )
         }
     }
