@@ -14,7 +14,8 @@ pub async fn get_vocab(
 ) -> impl Responder {
     state
         .dict
-        .async_lookup(vocab.into_inner()).await
+        .async_lookup(vocab.into_inner())
+        .await
         .map(|vocabs| HttpResponse::Ok().json(vocabs))
         .map_err(|e| ErrorInternalServerError(e))
 }
