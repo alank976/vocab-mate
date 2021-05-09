@@ -14,3 +14,6 @@ out/
 .factorypath
 
 */frontend/test-*
+
+.graphqlrc.yaml
+config/dev.toml
