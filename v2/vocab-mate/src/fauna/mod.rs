@@ -69,7 +69,7 @@ impl Dict for FaunaDbClient {
                 let inner_vec = resp_d.find_vocabs_by_word.data;
                 inner_vec.into_iter().map(|data| data.into()).collect()
             })
-            .unwrap_or(Vec::new());
+            .unwrap_or_else(|| Vec::new());
         Ok(vocabs)
     }
 }
@@ -106,6 +106,9 @@ mod dto_mapping {
                 data.word,
                 data.part_of_speech.into(),
                 data.definition,
+                data.examples.unwrap_or_else(|| Vec::new()),
+                data.synonyms.unwrap_or_else(|| Vec::new()),
+                data.antonyms.unwrap_or_else(|| Vec::new()),
                 to_local_datetime(data.ts),
             )
         }
@@ -119,6 +122,9 @@ mod dto_mapping {
                 data.word,
                 data.part_of_speech.into(),
                 data.definition,
+                data.examples.unwrap_or_else(|| Vec::new()),
+                data.synonyms.unwrap_or_else(|| Vec::new()),
+                data.antonyms.unwrap_or_else(|| Vec::new()),
                 to_local_datetime(data.ts),
             )
         }

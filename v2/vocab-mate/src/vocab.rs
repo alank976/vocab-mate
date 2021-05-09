@@ -19,21 +19,20 @@ impl Vocab {
         word: String,
         part_of_speech: PartOfSpeech,
         definition: String,
-        // examples: Vec<String>,
-        // synonyms: Vec<String>,
-        // antonyms: Vec<String>,
-        // last_updated: DateTime<Local>,
+        examples: Vec<String>,
+        synonyms: Vec<String>,
+        antonyms: Vec<String>,
+        last_updated: DateTime<Local>,
     ) -> Self {
         Self {
             id,
             word,
             part_of_speech,
             definition,
-            examples: Vec::new(),
-            synonyms: Vec::new(),
-            antonyms: Vec::new(),
-            // TODO: map from DB
-            last_updated: Local::now(),
+            examples,
+            synonyms,
+            antonyms,
+            last_updated,
         }
     }
 }

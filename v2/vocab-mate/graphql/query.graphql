@@ -1,23 +1,14 @@
 query FindQuery($word: String!) {
   findVocabsByWord(_size: 20, word: $word) {
     data {
-      _id
-      word
-      partOfSpeech
-      definition
-      _ts
+      ...commonFields
     }
   }
 }
-# TODO: try fragment?
 
 mutation CreateOne($input: VocabInput!) {
   createVocab(data: $input) {
-    _id
-    word
-    partOfSpeech
-    definition
-    _ts
+    ...commonFields
   }
 }
 
@@ -25,4 +16,15 @@ mutation DeleteOne($id: ID!) {
   deleteVocab(id: $id) {
     _id
   }
+}
+
+fragment commonFields on Vocab {
+  _id
+  word
+  partOfSpeech
+  definition
+  examples
+  synonyms
+  antonyms
+  _ts
 }

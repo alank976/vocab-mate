@@ -8,7 +8,8 @@ use graphql_client::GraphQLQuery;
 )]
 pub struct FindQuery;
 
-type Long = u128;
+// microsecond
+type Long = i64;
 
 #[derive(GraphQLQuery)]
 #[graphql(
