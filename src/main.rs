@@ -24,7 +24,7 @@ async fn main() -> Result<()> {
             .data_factory(create_app_context)
             .service(api::get_vocab)
     })
-    .bind("127.0.0.1:8080")?
+    .bind("0.0.0.0:8080")?
     .run()
     .await
 }

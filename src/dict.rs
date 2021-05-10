@@ -47,20 +47,20 @@ impl Dict for DictImpl {
     }
 
     async fn async_lookup(&self, vocab: String) -> Result<Vec<Vocab>> {
-        let stored = self.fauna_client.async_lookup(vocab).await?;
+        let stored = self.fauna_client.async_lookup(vocab.clone()).await?;
         info!("stored={:?}", stored);
-        let is_expired = stored
-            .iter()
-            .filter_map(|v| v.last_updated)
-            .min()
-            .filter(|oldest| {
-                info!("oldest time={}", oldest);
-                Local::now().signed_duration_since(oldest.clone()) > self.expiry
-            })
-            .is_some();
-        if is_expired {
+        let is_empty_or_expired = stored.is_empty()
+            || stored
+                .iter()
+                .filter_map(|v| v.last_updated)
+                .min()
+                .filter(|oldest| {
+                    info!("oldest time={}", oldest);
+                    Local::now().signed_duration_since(oldest.clone()) > self.expiry
+                })
+                .is_some();
+        if is_empty_or_expired {
             info!("lookup words api now");
-            let vocab = stored.first().unwrap().word.clone();
             for v in stored {
                 if let Some(id) = v.id {
                     self.fauna_client.delete(id)?;
