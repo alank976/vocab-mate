@@ -20,13 +20,14 @@ jobs:
         toolchain: stable
         # override: true 
     - uses: Swatinem/rust-cache@v1
-    - uses: actions-rs/cargo@v1
+    - name: Cargo test
+      uses: actions-rs/cargo@v1
       with:
         command: test
     - name: Run cargo bloat
-        uses: orf/cargo-bloat-action@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+      uses: orf/cargo-bloat-action@v1
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
     - name: List target
       run: ls -lrt && ls -l target
   # build:
