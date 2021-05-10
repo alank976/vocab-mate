@@ -24,10 +24,10 @@ jobs:
       uses: actions-rs/cargo@v1
       with:
         command: test
-    - name: Run cargo bloat
-      uses: orf/cargo-bloat-action@v1
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
+    # - name: Run cargo bloat
+    #   uses: orf/cargo-bloat-action@v1
+    #   with:
+    #     token: ${{ secrets.GITHUB_TOKEN }}
     - name: List target
       run: ls -lrt && ls -l target
   # build:
