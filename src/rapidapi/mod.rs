@@ -21,10 +21,6 @@ impl WordsApiClient {
 
 #[async_trait]
 impl Dict for WordsApiClient {
-    fn look_up(&self, _vocab: String) -> anyhow::Result<Vec<Vocab>> {
-        todo!()
-    }
-
     async fn async_lookup(&self, vocab: String) -> anyhow::Result<Vec<Vocab>> {
         let mut response = surf::get(format!("{}/words/{}", self.url, vocab))
             .header(self.api_key_header.as_str(), self.api_key_value.as_str())

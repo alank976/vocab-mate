@@ -2,9 +2,9 @@ name: cargo-build
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 env:
   CARGO_TERM_COLOR: always
@@ -13,32 +13,31 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions-rs/toolchain@v1
-      with:
-        profile: minimal
-        toolchain: stable
-        # override: true 
-    - uses: Swatinem/rust-cache@v1
-    - name: Cargo test
-      uses: actions-rs/cargo@v1
-      with:
-        command: test
-    - name: Run cargo bloat
-      uses: orf/cargo-bloat-action@v1
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-    - name: List target
-      run: ls -l target
-  # build:
-
-  #   runs-on: ubuntu-latest
-
-  #   steps:
-  #   - uses: actions/checkout@v2
-  #   - name: Build
-  #     run: cargo build --verbose
-  #   - name: Run tests
-  #     run: cargo test --verbose
-  #   - name: Release
-  #     run: cargo build --release
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          # override: true
+      - uses: Swatinem/rust-cache@v1
+      - name: Cargo test
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          # override: true
+      - uses: Swatinem/rust-cache@v1
+      # - name: Run cargo bloat
+      #   uses: orf/cargo-bloat-action@v1
+      #   with:
+      #     token: ${{ secrets.GITHUB_TOKEN }}
+      - name: List target
+        run: ls -l target
