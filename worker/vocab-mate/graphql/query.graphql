@@ -1,0 +1,30 @@
+query FindQuery($word: String!) {
+  findVocabsByWord(_size: 20, word: $word) {
+    data {
+      ...commonFields
+    }
+  }
+}
+
+mutation CreateOne($input: VocabInput!) {
+  createVocab(data: $input) {
+    ...commonFields
+  }
+}
+
+mutation DeleteOne($id: ID!) {
+  deleteVocab(id: $id) {
+    _id
+  }
+}
+
+fragment commonFields on Vocab {
+  _id
+  word
+  partOfSpeech
+  definition
+  examples
+  synonyms
+  antonyms
+  _ts
+}
