@@ -14,30 +14,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          # override: true
-      - uses: Swatinem/rust-cache@v1
-      - name: Cargo test
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
-  build:
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          # override: true
-      - uses: Swatinem/rust-cache@v1
-      # - name: Run cargo bloat
-      #   uses: orf/cargo-bloat-action@v1
-      #   with:
-      #     token: ${{ secrets.GITHUB_TOKEN }}
-      - name: List target
-        run: ls -l target
+  #     - uses: actions-rs/toolchain@v1
+  #       with:
+  #         profile: minimal
+  #         toolchain: stable
+  #         # override: true
+  #     - uses: Swatinem/rust-cache@v1
+  #     - name: Cargo test
+  #       uses: actions-rs/cargo@v1
+  #       with:
+  #         command: test
+  # build:
+  #   needs: test
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - uses: actions-rs/toolchain@v1
+  #       with:
+  #         profile: minimal
+  #         toolchain: stable
+  #         # override: true
+  #     - uses: Swatinem/rust-cache@v1
+  #     # - name: Run cargo bloat
+  #     #   uses: orf/cargo-bloat-action@v1
+  #     #   with:
+  #     #     token: ${{ secrets.GITHUB_TOKEN }}
+  #     - name: List target
+  #       run: ls -l target
