@@ -1,0 +1,13 @@
+name = "vocab-mate-dev"
+type = "rust"
+
+account_id = "e60f8a861f91b727d19e7dc67e9dce49"
+workers_dev = true
+route = ""
+zone_id = ""
+
+
+# [env.prd]
+# name = "wasm-prod"
+# zone_id = "8e8f9efd66a5b0b081ed2236e6dd01a7"
+# route = "wasm.alankan.dev/*"
