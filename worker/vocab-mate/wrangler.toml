@@ -1,13 +1,21 @@
+account_id = "e60f8a861f91b727d19e7dc67e9dce49"
 name = "vocab-mate-dev"
 type = "rust"
-
-account_id = "e60f8a861f91b727d19e7dc67e9dce49"
 workers_dev = true
-route = ""
-zone_id = ""
 
+[vars]
+FAUNADB_URL = "https://graphql.fauna.com/graphql"
+RAPIDAPI_API_KEY_HEADER = "X-Rapidapi-Key"
+RAPIDAPI_WORDSAPI_URL = "https://wordsapiv1.p.rapidapi.com"
+VOCAB_MATE_EXPIRY = "2h"
 
-# [env.prd]
-# name = "wasm-prod"
-# zone_id = "8e8f9efd66a5b0b081ed2236e6dd01a7"
-# route = "wasm.alankan.dev/*"
+[env.prd]
+name = "vocab-mate"
+route = "vocab-mate.alankan.dev/*"
+zone_id = "8e8f9efd66a5b0b081ed2236e6dd01a7"
+
+[env.prd.vars]
+FAUNADB_URL = "https://graphql.fauna.com/graphql"
+RAPIDAPI_API_KEY_HEADER = "X-Rapidapi-Key"
+RAPIDAPI_WORDSAPI_URL = "https://wordsapiv1.p.rapidapi.com"
+VOCAB_MATE_EXPIRY = "2d"
