@@ -13,9 +13,11 @@ jobs:
           toolchain: stable
       - uses: Swatinem/rust-cache@v1
         with:
-          working-directory: workers/vocab-mate/
-      - uses: alank976/wrangler-action-for-rust@1.0.0
+          working-directory: workers/vocab-mate
+      - name: wrangler build
+        uses: alank976/wrangler-action-for-rust@1.0.0
         with: 
+          workingDirectory: workers/vocab-mate
           apiToken: foo
           publish: false
           preCommands: wrangler build

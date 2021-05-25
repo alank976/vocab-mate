@@ -1,3 +1,4 @@
+#[allow(unused_imports)]
 use wasm_bindgen::prelude::*;
 
 use cfg_if::cfg_if;
@@ -17,6 +18,8 @@ cfg_if! {
         pub fn set_panic_hook() {}
     }
 }
+
+#[allow(unused_unsafe)]
 pub mod log {
     use wasm_bindgen::JsValue;
     use web_sys::console::{debug_1, error_1, info_1};
