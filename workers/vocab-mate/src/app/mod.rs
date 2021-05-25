@@ -15,7 +15,7 @@ pub mod prelude {
 }
 
 pub async fn lookup(configs: Configs, vocab: String) -> Vec<Vocab> {
-    let context = create_app_context(application_configs);
+    let context = create_app_context(configs);
     let vocabs = context
         .dict
         .async_lookup(vocab)

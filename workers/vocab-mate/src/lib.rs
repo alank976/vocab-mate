@@ -6,14 +6,13 @@ mod configs;
 mod utils;
 
 use cfg_if::cfg_if;
-use std::collections::HashMap;
+use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;
 
-use crate::app::{create_app_context, prelude::*};
-
-use crate::configs::Configs;
-use crate::utils::{self, log};
-use serde::{Deserialize, Serialize};
+#[allow(unused_imports)]
+use app::prelude::*;
+use configs::Configs;
+use utils::log;
 
 /*
 This main `lib` & `utils` module should be the only ones hold wasm related I/O logic
@@ -37,9 +36,10 @@ pub async fn handle_request(config: JsValue, request: JsValue) -> Result<JsValue
     log::info(&format!("{:?}", path_variable));
 
     match path_variable {
+        // FIXME: use a resource path /vocabs/{}
         Some(vocab) if !vocab.ends_with(".ico") => {
-            let vocabs = app::api::lookup(application_configs, vocab).await;
-            Ok(JsValue::from_serde(vocabs))
+            let vocabs = app::lookup(application_configs, vocab.into()).await;
+            JsValue::from_serde(&vocabs).map_err(|e| JsValue::from_str(&format!("{}", e)))
         }
         _ => no_op(),
     }
